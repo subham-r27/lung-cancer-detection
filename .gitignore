@@ -62,8 +62,9 @@ conda-meta/
 # checkpoints/
 
 # Data files (uncomment if you don't want to track datasets)
-# data/
-# datasets/
+data/
+datasets/
+Test Cases/
 # *.csv
 # *.json
 # *.parquet
