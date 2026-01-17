@@ -13,7 +13,7 @@ os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 app = FastAPI(title="Lung Cancer Detection")
 
 # Paths
-MODEL_PATH = "../dev/models/cnn_model.keras"
+MODEL_PATH = "dev/models/cnn_model.keras"
 UPLOAD_FOLDER = "static/uploads"
 
 # Create upload folder
@@ -26,8 +26,8 @@ model = load_model(MODEL_PATH)
 CLASS_LABELS = ["Benign", "Malignant", "Normal"]
 
 # Templates & static files
-templates = Jinja2Templates(directory="templates")
-app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="app/templates")
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 
 @app.get("/", response_class=HTMLResponse)
