@@ -14,6 +14,10 @@ In addition to model training and evaluation, the project also includes a **web 
 
 ### Dataset Description
 - Lung CT scan slices from real patient cases
+
+https://github.com/user-attachments/assets/b35aab16-2964-4761-a713-ce46b88d147b
+
+
 - Three classes:
   - **Normal**
   - **Benign**
