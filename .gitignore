@@ -65,6 +65,7 @@ conda-meta/
 data/
 datasets/
 Test Cases/
+uploads/
 # *.csv
 # *.json
 # *.parquet

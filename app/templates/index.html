@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lung Cancer Detection</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: #ffffff;
+            width: 100%;
+            max-width: 600px;
+            margin: auto;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header-image {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        h2 {
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        }
+
+        .subtitle {
+            color: #555;
+            margin-bottom: 30px;
+            font-size: 17px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            background: #f8f9ff;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+            transform: translateY(-2px);
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .file-label {
+            display: inline-block;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 17px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .file-label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .file-name {
+            margin-top: 10px;
+            color: #666;
+            font-size: 14px;
+            font-style: italic;
+        }
+
+        button {
+            margin-top: 25px;
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            width: 100%;
+            max-width: 300px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        img {
+            width: 100%;
+            max-width: 400px;
+            margin-top: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease;
+        }
+
+        img:hover {
+            transform: scale(1.02);
+        }
+
+        #loading {
+            display: none;
+            margin-top: 30px;
+            font-weight: 700;
+            color: #667eea;
+            font-size: 18px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 15px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #pred {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+            border-radius: 15px;
+            border: 2px solid #e0e7ff;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #pred h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+
+        .prediction-badge {
+            display: inline-block;
+            padding: 16px 36px;
+            border-radius: 24px;
+            font-weight: 800;
+            font-size: 28px;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .prediction-badge.benign {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #28a745;
+        }
+
+        .prediction-badge.malignant {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #dc3545;
+        }
+
+        .prediction-badge.normal {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 2px solid #17a2b8;
+        }
+
+        .confidence {
+            font-size: 20px;
+            color: #444;
+            margin: 15px 0;
+            font-weight: 600;
+        }
+
+        .confidence-value {
+            font-weight: 800;
+            color: #667eea;
+            font-size: 28px;
+            text-shadow: 0 1px 2px rgba(102, 126, 234, 0.3);
+        }
+
+        #nothing {
+            margin-top: 25px;
+            color: #666;
+            font-style: italic;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 10px;
+        }
+
+        footer {
+            margin-top: 35px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e7ff;
+            color: #666;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        footer span {
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 25px 20px;
+                border-radius: 15px;
+            }
+
+            h2 {
+                font-size: 28px;
+                font-weight: 800;
+            }
+
+            .prediction-badge {
+                font-size: 22px;
+                padding: 12px 28px;
+            }
+
+            .header-image {
+                width: 100px;
+                height: 100px;
+                font-size: 50px;
+            }
+
+            .upload-area {
+                padding: 20px;
+            }
+
+            button {
+                padding: 12px 25px;
+                font-size: 16px;
+                font-weight: 700;
+            }
+
+            img {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            h2 {
+                font-size: 24px;
+                font-weight: 800;
+            }
+
+            .prediction-badge {
+                font-size: 18px;
+                padding: 10px 22px;
+            }
+
+            .confidence-value {
+                font-size: 24px;
+            }
+
+            .header-image {
+                width: 80px;
+                height: 80px;
+                font-size: 40px;
+            }
+
+            .subtitle {
+                font-size: 14px;
+                font-weight: 600;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="header-image">🫁</div>
+    <h2>Lung Cancer Detection</h2>
+    <p class="subtitle">AI-Powered Medical Image Analysis</p>
+
+    <form action="/predict" method="post" enctype="multipart/form-data">
+        <div class="upload-area">
+            <div class="file-input-wrapper">
+                <input type="file" name="file" accept="image/*" id="fileInput">
+                <label for="fileInput" class="file-label">📁 Choose CT Scan Image</label>
+            </div>
+            <div class="file-name" id="fileName"></div>
+        </div>
+        <button type="submit">🔍 Analyze & Predict</button>
+    </form>
+
+    <!-- Placeholder text -->
+    <div id="nothing"
+         {% if prediction %}style="display:none"{% endif %}>
+        Upload a lung CT scan image to get AI-powered prediction
+    </div>
+
+    <!-- Loading indicator -->
+    <div id="loading">
+        <div class="spinner"></div>
+        <div>Analyzing image... Please wait</div>
+    </div>
+
+    <!-- Prediction result -->
+    {% if prediction %}
+        <div id="pred">
+            <h3>Prediction Result</h3>
+            <div class="prediction-badge {{ prediction.lower() }}">{{ prediction }}</div>
+            <div class="confidence">
+                Confidence: <span class="confidence-value">{{ confidence }}%</span>
+            </div>
+            <img src="{{ image_path }}" alt="Uploaded CT Scan">
+        </div>
+    {% endif %}
+
+    <footer>Developed by <span>Subham Rout</span></footer>
+</div>
+
+<script>
+    const form = document.querySelector("form")
+    const image = document.querySelector("input[type='file']")
+    const pred = document.querySelector("#pred")
+    const nothing = document.querySelector("#nothing")
+    const loading = document.querySelector("#loading")
+    const fileName = document.querySelector("#fileName")
+
+    // Display selected file name
+    image.addEventListener("change", (e) => {
+        if (e.target.files.length > 0) {
+            fileName.textContent = "Selected: " + e.target.files[0].name
+            fileName.style.color = "#667eea"
+        } else {
+            fileName.textContent = ""
+        }
+    })
+
+    if (pred && pred.textContent.length > 4) {
+        nothing.style.display = "none"
+    }
+
+    form.addEventListener("submit", (e) => {
+        if (!image.files.length) {
+            e.preventDefault()
+            alert("Please upload an image before predicting.")
+        } else {
+            if (pred) pred.style.display = "none"
+            nothing.style.display = "none"
+            loading.style.display = "block"
+        }
+    })
+</script>
+
+</body>
+</html>
